@@ -16,18 +16,22 @@
 #endif
 
 #ifdef TRY_REORDER
-#define DUMMY_ON_MAIN()			void Dummy(){printf("this=%p\n");}
+#define DUMMY_ON_MAIN()					\
+	void Dummy(){printf("this=%p,m_nVal=%d\n",static_cast<void*>(this),m_nVal++);} \
+	int m_nVal;	\
+	TestClassMain():m_nVal(10){printf("thread=%d,%s\n",static_cast<int>(GetCurrentThreadId()),__FUNCTION__);}
 #define CALL_DUMMY_ON_MAIN(_mainCls)	g_testClassMain.Dummy();
 #else
-#define DUMMY_ON_MAIN(_mainCls)
+#define DUMMY_ON_MAIN()		\
+	TestClassMain(){printf("thread=%d,%s\n",static_cast<int>(GetCurrentThreadId()),__FUNCTION__);}
 #define CALL_DUMMY_ON_MAIN(_mainCls)
 #endif
 
 class TestClassMain {
 public:
 	DUMMY_ON_MAIN()
-	TestClassMain(){printf("thread=%d,%s\n",static_cast<int>(GetCurrentThreadId()),__FUNCTION__);}
 	~TestClassMain() {printf("thread=%d,%s\n", static_cast<int>(GetCurrentThreadId()), __FUNCTION__);}
+
 };
 
 extern TestClassMain g_testClassMain;
