@@ -16,7 +16,7 @@ typedef HANDLE pthread_t;
 #define pthread_join(__thread,__retArg)	\
 	do{ \
 		WaitForSingleObjectEx((__thread),INFINITE,TRUE); \
-		CloseHandle((__thread));
+		CloseHandle((__thread)); \
 	}while(0)
 #define pthread_create(__newthread,__attr,__start_routine,__arg)	\
 	( *(__newthread)=CreateThread((__attr),0,ExiterThreadFunction,(__arg),0,nullptr) )

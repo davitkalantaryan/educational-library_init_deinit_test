@@ -9,8 +9,44 @@ Two projects are compiled - library and executable that loads and unloads this l
       a) In the case of Microsoft Windows following should be considered  
 	      [1] global constructors  
 	  	  [2] DllMain (if we have dynamic library)  
-	  	  [3] [".CRT$XCU"](https://docs.microsoft.com/en-us/cpp/c-runtime-library/crt-initialization?view=vs-2019)  
+	  	  [3] [".CRT$XCU"](https://docs.microsoft.com/en-us/cpp/c-runtime-library/crt-initialization?view=vs-2019) method  
 	  b) In the case of GCC following possible initialization routine sequence should be considered  
 	      [1] global constructors  
 	  	  [2]  __attribute__ ((__constructor__))  
  2.  In which thread library cleanup routine called. In the case of 
+      a) return from main thread  
+	  b) exit call in the mid of execution  
+
+
+## How to compile application  
+### Windows  
+Better to open developer command prompt. Visual studio version does not play role. From visual studio console run the command  
+``` bat  
+nmake /f windows.Makefile  
+:: to clean the stuff  
+nmake /f windows.Makefile clean  
+```  
+  
+### Linux  
+From any shell run the command  
+``` bash  
+make -f linux.Makefile  
+# to clean the stuff  
+make -f linux.Makefile clean  
+```
+
+## products  
+Commands above will generate 2 files: dynamic library and executable to test this library  
+  
+## running test  
+```  
+./bin_library_init_deinit_test   # will load library and unload dynamically from main thread  
+./bin_library_init_deinit_test 1 # will load library dynamically and unload lib because of exit on main return    
+./bin_library_init_deinit_test 1 2 # will load library will be done from main thread and other thread dynamically will unload it  
+./bin_library_init_deinit_test 1 2 # will load library will be done from main thread and library will be unloaded because of exit call from other thread  
+```  
+  
+### conclusions on tests  
+ 1. If process exit triggered by not library loader thread, then initialization routine and cleanup routines will be called from different conexes  
+    This is not taken into account always!!!  
+ 2. Initializing routines calling sequence will be listed below  

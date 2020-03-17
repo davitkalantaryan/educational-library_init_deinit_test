@@ -12,7 +12,7 @@ mkfile_dir		:= $(shell dirname $(mkfile_path))
 ObjectsDirBase		= $(mkfile_dir)/.objects
 SourceDirBase		= $(mkfile_dir)
 targetDir		= $(mkfile_dir)
-binTargetFilePath	= $(targetDir)/$(BinTargetName).bin
+binTargetFilePath	= $(targetDir)/$(BinTargetName)
 dllTargetFilePath	= $(targetDir)/lib$(DllTargetName).so
 
 CC			= gcc
