@@ -25,11 +25,12 @@ LDPARAMS		=
 LIBS			=
 
 
-BinObjects	=			\
+BinObjects	=						\
 	$(ObjectsDirBase)/main_library_init_deinit_test.o
 
-DllObjects	=			\
-	$(ObjectsDirBase)/entry_library_init_deinit_test.o
+DllObjects	=						\
+	$(ObjectsDirBase)/entry_library_init_deinit_test.o	\
+	$(ObjectsDirBase)/second_library_init_deinit_test.o
 
 all: $(BinTargetName)
 
