@@ -1,0 +1,13 @@
+*.[oa]
+*~
+*.obj
+*.pro.user*
+*.exe
+*.dll
+*.lib
+*.bin
+.objects
+
+dev/vs/.vs
+dev/vs/*/Debug
+dev/vs/dll_library_init_deinit_test/dll_library_init_deinit_test.vcxproj.user
