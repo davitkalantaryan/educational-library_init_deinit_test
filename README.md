@@ -50,3 +50,6 @@ Commands above will generate 2 files: dynamic library and executable to test thi
  1. If process exit triggered by not library loader thread, then initialization routine and cleanup routines will be called from different conexes  
     This is not taken into account always!!!  
  2. Initializing routines calling sequence will be listed below  
+
+
+![Init deinit sequence](https://github.com/davitkalantaryan/library_init_deinit_test/blob/master/docs/images/windows_output_sceenshot.png)  
