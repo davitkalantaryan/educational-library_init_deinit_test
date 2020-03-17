@@ -37,6 +37,10 @@ CurObjectsDir = $(DllObjectsDir)
 .cpp.obj:
 	if not exist $(CurObjectsDir)\$(@D) mkdir $(CurObjectsDir)\$(@D)
 	$(CPPC) /c $(CXXFLAGS) /Fo$(BinObjectsDir)\ $*.cpp
+
+.cxx.obj:
+	if not exist $(CurObjectsDir)\$(@D) mkdir $(CurObjectsDir)\$(@D)
+	$(CPPC) /c $(CXXFLAGS) /Fo$(BinObjectsDir)\ $*.cxx
   
 all: $(BinTargetName)
 
