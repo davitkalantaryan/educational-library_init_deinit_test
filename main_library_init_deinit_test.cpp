@@ -8,6 +8,11 @@
 #include <Windows.h>
 #define LIBRARY_PATH	LIBRARY_NAME_BASE ".dll"
 #else
+#include <dlfcn.h>
+#define LIBRARY_PATH	"lib" LIBRARY_NAME_BASE ".so"
+typedef void* HMODULE;
+#define LoadLibraryA(__libName) dlopen((__libName), RTLD_LAZY)
+#define FreeLibrary dlclose
 #endif
 
 

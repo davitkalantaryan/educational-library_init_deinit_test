@@ -2,11 +2,17 @@
 //#define TRY_REORDER
 
 #include <stdio.h>
+#include <stdlib.h>
 #ifdef _WIN32
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <Windows.h>
+#define EXPORT_FROM_LIB __declspec(dllexport)
 #else
+#include <pthread.h>
+#include <dlfcn.h>
+#define GetCurrentThreadId  pthread_self
+#define EXPORT_FROM_LIB
 #endif
 
 #ifdef TRY_REORDER
@@ -70,13 +76,14 @@ public:
 	~TestClass2() {printf("thread=%d,%s\n", static_cast<int>(GetCurrentThreadId()), __FUNCTION__);}
 }static s_testClass2;
 
-__declspec(dllexport) int nonmain(void)
+EXPORT_FROM_LIB int nonmain(void)
 {
 	printf("Hello world from %s\n", __FUNCTION__);
 	return 0;
 }
 
 
+#ifdef _WIN32
 BOOL WINAPI DllMain(HINSTANCE a_hinstDLL, DWORD a_fdwReason, LPVOID a_lpvReserved)
 {
 	printf("thread=%d,%s,", static_cast<int>(GetCurrentThreadId()), __FUNCTION__);
@@ -102,6 +109,7 @@ BOOL WINAPI DllMain(HINSTANCE a_hinstDLL, DWORD a_fdwReason, LPVOID a_lpvReserve
 	}
 	return TRUE;
 }
+#endif // #ifdef _WIN32
 
 
 extern "C" {
