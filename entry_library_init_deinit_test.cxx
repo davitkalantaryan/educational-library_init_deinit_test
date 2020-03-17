@@ -41,10 +41,10 @@ extern "C" {
 
 #ifdef _MSC_VER
 
-#pragma section(".CRT$XCU",read)
+#pragma section(".CRT$XCB",read)
 #define INITIALIZER_RAW_(f,p)										\
         static void f(void);										\
-        __declspec(allocate(".CRT$XCU")) void (*f##_)(void) = f;	\
+        __declspec(allocate(".CRT$XCB")) void (*f##_)(void) = f;	\
         __pragma(comment(linker,"/include:" p #f "_"))				\
         static void f(void)
 
@@ -90,25 +90,27 @@ EXPORT_FROM_LIB int nonmain(void)
 #ifdef _WIN32
 BOOL WINAPI DllMain(HINSTANCE a_hinstDLL, DWORD a_fdwReason, LPVOID a_lpvReserved)
 {
-	printf("thread=%d,%s,", static_cast<int>(GetCurrentThreadId()), __FUNCTION__);
+	//printf("thread=%d,%s,", static_cast<int>(GetCurrentThreadId()), __FUNCTION__);
 
 	switch(a_fdwReason){
 	case DLL_PROCESS_ATTACH:
+		printf("thread=%d,%s,", static_cast<int>(GetCurrentThreadId()), __FUNCTION__);
 		printf("DLL_PROCESS_ATTACH. ");
 		printf(a_lpvReserved ? "Static load (-l compiler option is used)\n" : "Dynamic load (LoadLibrary) called\n");
 		break;
 	case DLL_PROCESS_DETACH:
+		printf("thread=%d,%s,", static_cast<int>(GetCurrentThreadId()), __FUNCTION__);
 		printf("DLL_PROCESS_DETACH. ");
 		printf(a_lpvReserved ? "Process terminating\n" : "Dynamic unload (FreeLibrary) called\n");
 		break;
 	case DLL_THREAD_ATTACH:
-		printf("DLL_THREAD_ATTACH.\n");
+		//printf("DLL_THREAD_ATTACH.\n");
 		break;
 	case DLL_THREAD_DETACH:
-		printf("DLL_THREAD_DETACH.\n");
+		//printf("DLL_THREAD_DETACH.\n");
 		break;
 	default:
-		printf("default:\n"); // never will happen
+		//printf("default:\n"); // never will happen
 		break;
 	}
 	return TRUE;

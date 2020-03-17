@@ -10,7 +10,11 @@
 .objects
 
 dev/vs/.vs
+dev/vs/Debug
+dev/vs/Release
+
 dev/vs/*/Debug
+dev/vs/*/Release
 dev/vs/dll_library_init_deinit_test/dll_library_init_deinit_test.vcxproj.user
 
 dev/build*Debug
