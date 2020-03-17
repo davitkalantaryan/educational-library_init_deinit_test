@@ -2,6 +2,7 @@
 #define LIBRARY_NAME_BASE	"dll_library_init_deinit_test"
 
 #include <iostream>
+#include <stdlib.h>
 #ifdef _WIN32
 #include <WinSock2.h>
 #include <WS2tcpip.h>
@@ -9,7 +10,18 @@
 #define LIBRARY_PATH			LIBRARY_NAME_BASE ".dll"
 #define THREAD_RET				DWORD 
 #define THREAD_RET_AND_CALLING	DWORD WINAPI
+#define proper_cast				static_cast
+typedef HANDLE pthread_t;
+// let's for now ignore thred return (GetThreadExitCode)
+#define pthread_join(__thread,__retArg)	\
+	do{ \
+		WaitForSingleObjectEx((__thread),INFINITE,TRUE); \
+		CloseHandle((__thread));
+	}while(0)
+#define pthread_create(__newthread,__attr,__start_routine,__arg)	\
+	( *(__newthread)=CreateThread((__attr),0,ExiterThreadFunction,(__arg),0,nullptr) )
 #else
+#include <pthread.h>
 #include <dlfcn.h>
 #define LIBRARY_PATH	"lib" LIBRARY_NAME_BASE ".so"
 typedef void* HMODULE;
@@ -17,16 +29,24 @@ typedef void* HMODULE;
 #define FreeLibrary dlclose
 #define THREAD_RET				void* 
 #define THREAD_RET_AND_CALLING	void*
+#define proper_cast				reinterpret_cast
+#if __cplusplus<=201103L
+#define nullptr NULL
+#endif
 #endif
 
-static HMODULE s_libHandle = static_cast<HMODULE>(0);
+static HMODULE s_libHandle = proper_cast<HMODULE>(0);
 
 static THREAD_RET_AND_CALLING ExiterThreadFunction(void* lpThreadParameter);
 
 int main(int a_argc, char* [])
 {
-	if(a_argc>1){
+	if(a_argc>2){
 		::std::cout << "second thread will be created to cleanup lib\n";
+	}
+
+	if((a_argc==2)||(a_argc==4)){
+		::std::cout << "Exit will be called (no FreeLibrary or dlclose)\n";
 	}
 
 	s_libHandle = LoadLibraryA(LIBRARY_PATH);
@@ -36,20 +56,23 @@ int main(int a_argc, char* [])
 		return 0;
 	}
 
-	if(a_argc>1){
-		HANDLE	secondThreadHandle = CreateThread(nullptr,0,ExiterThreadFunction,nullptr,0,nullptr);
-		WaitForSingleObjectEx(secondThreadHandle,INFINITE,TRUE);
-		CloseHandle(secondThreadHandle);
+	if(a_argc>2){
+		pthread_t threadHandle;
+		pthread_create(&threadHandle,nullptr,ExiterThreadFunction,(a_argc>3)?reinterpret_cast<void*>(1):nullptr);
+		pthread_join(threadHandle,nullptr);
 	}
 	else{
-		FreeLibrary(s_libHandle);
+		if(a_argc<2){FreeLibrary(s_libHandle);}
 	}
 	
 	return 0;
 }
 
-static THREAD_RET_AND_CALLING ExiterThreadFunction(void*)
+static THREAD_RET_AND_CALLING ExiterThreadFunction(void* a_pArg)
 {
+	if(a_pArg){
+		exit(0);
+	}
 	FreeLibrary(s_libHandle);
-	return static_cast<THREAD_RET>(0);
+	return proper_cast<THREAD_RET>(0);
 }
