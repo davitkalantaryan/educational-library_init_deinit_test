@@ -47,7 +47,7 @@ $(ObjectsDirBase)/%.o: $(SourceDirBase)/%.cxx
 $(BinTargetName): $(BinObjects) $(DllTargetName)
 	mkdir -p $(targetDir)
 	@#ld $(LDPARAMS) -T $< -o $(TARGET_FILE_PATH) $(OBJECTS)
-	$(LINKER) $(BinObjects) $(LIBS) $(LFLAGS) -ldl -o $(binTargetFilePath)
+	$(LINKER) $(BinObjects) $(LIBS) $(LFLAGS) -ldl -pthread -o $(binTargetFilePath)
 
 $(DllTargetName): $(DllObjects)
 	@mkdir -p $(targetDir)
