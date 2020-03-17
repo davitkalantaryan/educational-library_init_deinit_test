@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\entry_library_init_deinit_test.cxx" />
+    <ClCompile Include="..\..\..\second_library_init_deinit_test.cxx" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

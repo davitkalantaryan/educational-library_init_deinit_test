@@ -41,12 +41,21 @@ static THREAD_RET_AND_CALLING ExiterThreadFunction(void* lpThreadParameter);
 
 int main(int a_argc, char* [])
 {
-	if(a_argc>2){
-		::std::cout << "second thread will be created to cleanup lib\n";
+	if(a_argc<3){
+		if (a_argc == 1) {
+			::std::cout << "FreeLibrary[dlclose] will be called from main thread\n";
+		}
+		else {
+			::std::cout << "Return from main function will be called (no FreeLibrary or dlclose)\n";
+		}
 	}
-
-	if((a_argc==2)||(a_argc==4)){
-		::std::cout << "Exit will be called (no FreeLibrary or dlclose)\n";
+	else{
+		if(a_argc==3){
+			::std::cout << "second thread will be created to cleanup lib with FreeLibrary[dlclose]\n";
+		}
+		else{
+			::std::cout << "second thread will be created to call exit for exiting application\n";
+		}
 	}
 
 	s_libHandle = LoadLibraryA(LIBRARY_PATH);

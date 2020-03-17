@@ -30,7 +30,8 @@ BinObjects			=					\
 	main_library_init_deinit_test.obj	
 
 DllObjects			=					\
-	entry_library_init_deinit_test.obj
+	entry_library_init_deinit_test.obj	\
+	second_library_init_deinit_test.obj
 
 CurObjectsDir = $(DllObjectsDir)
 

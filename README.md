@@ -4,6 +4,7 @@ Example software to demonstrate specifics of initializing and cleaning libraries
 2 compilers are discussed here   
  1.  [microsoft](https://www.cprogramming.com/visual.html)  
  2.  [gcc](https://gcc.gnu.org/) (clang is compatible with gcc, but for time being clang tests are not done (planned to do))  
+  
 Two projects are compiled - library and executable that loads and unloads this library to check and demonstrate following:  
  1.  What is the sequence of initializations routines calling.  
       a) In the case of Microsoft Windows following should be considered  
@@ -50,6 +51,36 @@ Commands above will generate 2 files: dynamic library and executable to test thi
  1. If process exit triggered by not library loader thread, then initialization routine and cleanup routines will be called from different conexes  
     This is not taken into account always!!!  
  2. Initializing routines calling sequence will be listed below  
+     [1]  pragma_initializers # for windows some hack is needed to make this first  
+	 [2]  global/static constructors  
+	 [3]  only windows - DllMain  
 
 
 ![Init deinit sequence](https://github.com/davitkalantaryan/library_init_deinit_test/blob/master/docs/images/windows_output_sceenshot.png)  
+![sequence with 2 library source files](https://github.com/davitkalantaryan/library_init_deinit_test/blob/master/docs/images/windows_output_with_2_source_files_sceenshot.png)  
+
+## code example to insert code in the crt initialization section (look here microsoft [docu](https://docs.microsoft.com/en-us/cpp/c-runtime-library/crt-initialization?view=vs-2019))  
+```cpp  
+#pragma section(".CRT$XCB",read)  
+#define INITIALIZER_RAW_(f,p)										\  
+        static void f(void);										\  
+        __declspec(allocate(".CRT$XCB")) void (*f##_)(void) = f;	\  
+        __pragma(comment(linker,"/include:" p #f "_"))				\  
+        static void f(void)  
+  
+#if defined(_WIN64) || defined(_M_ARM)  
+#define PRAGMA_INITIALIZER(f) INITIALIZER_RAW_(f,"")  
+#else  
+#define PRAGMA_INITIALIZER(f) INITIALIZER_RAW_(f,"_")  
+#endif  
+static void AtExitCleanupFunction(void)
+{
+	printf("I'll be called during this code cleanup!\n");
+}
+
+PRAGMA_INITIALIZER(pragma_initializaer))
+{
+	printf("I'll be called during this code initialization and my undecorated name is %s!\n",__FUNCTION__); // undecorated name is 'pragma_initializaer'
+	atexit(AtExitCleanupFunction);
+}
+```  
