@@ -61,7 +61,7 @@ Commands above will generate 2 files: dynamic library and executable to test thi
 		In the case if there are 2 files each with '__attribute__((__constructor__))'s and constrctors, then constructors in first  
 		file will be called before '__attribute__((__constructor__))'s in second file.  
 		So for GCC (I guess clang also, should be tested) no guaranty that '__attribute__((__constructor__))'s will be called  
-		before constructors if they are all not in one source file . see [this]() !!!!!!!!!!!!!!!!!!!!!!!!!!  
+		before constructors if they are all not in one source file . see [this](https://github.com/davitkalantaryan/library_init_deinit_test#linux-screenshot-on-problem)  
 
 
 ![Init deinit sequence](https://github.com/davitkalantaryan/library_init_deinit_test/blob/master/docs/images/windows_output_sceenshot.png)  
@@ -94,5 +94,5 @@ PRAGMA_INITIALIZER(pragma_initializaer))
 }
 ```  
 
-## linxu screenshot on problem  
+## linux screenshot on problem  
 ![gcc unknown sequence](https://github.com/davitkalantaryan/library_init_deinit_test/blob/master/docs/images/problematic_initialization_sequence_on_linux.png)
