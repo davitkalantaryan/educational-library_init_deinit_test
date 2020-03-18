@@ -70,6 +70,9 @@ Commands above will generate 2 files: dynamic library and executable to test thi
 ## code example to insert code in the crt initialization section 
 look here microsoft [documentation](https://docs.microsoft.com/en-us/cpp/c-runtime-library/crt-initialization?view=vs-2019)  
 ```cpp  
+#ifdef __cplusplus  
+extern "C"{  
+#endif  
 #pragma section(".CRT$XCB",read)  
 #define INITIALIZER_RAW_(f,p)										\  
         static void f(void);										\  
@@ -82,16 +85,19 @@ look here microsoft [documentation](https://docs.microsoft.com/en-us/cpp/c-runti
 #else  
 #define PRAGMA_INITIALIZER(f) INITIALIZER_RAW_(f,"_")  
 #endif  
-static void AtExitCleanupFunction(void)
-{
-	printf("I'll be called during this code cleanup!\n");
-}
-
-PRAGMA_INITIALIZER(pragma_initializaer))
-{
-	printf("I'll be called during this code initialization and my undecorated name is %s!\n",__FUNCTION__); // undecorated name is 'pragma_initializaer'
-	atexit(AtExitCleanupFunction);
-}
+static void AtExitCleanupFunction(void)  
+{  
+	printf("I'll be called during this code cleanup!\n");  
+}  
+  
+PRAGMA_INITIALIZER(pragma_initializaer))  
+{  
+	printf("I'll be called during this code initialization and my undecorated name is %s!\n",__FUNCTION__); // undecorated name is 'pragma_initializaer'  
+	atexit(AtExitCleanupFunction);  
+}  
+#ifdef __cplusplus  
+}  
+#endif
 ```  
 
 ## linux screenshot on problem  
