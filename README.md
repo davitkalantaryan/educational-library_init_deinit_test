@@ -13,7 +13,7 @@ Two projects are compiled - library and executable that loads and unloads this l
 	  	  [3] [".CRT$XCU"](https://docs.microsoft.com/en-us/cpp/c-runtime-library/crt-initialization?view=vs-2019) method  
 	  b) In the case of GCC following possible initialization routine sequence should be considered  
 	      [1] global constructors  
-	  	  [2]  __attribute__ ((__constructor__))  
+	  	  [2]  __attribute__((__constructor__))  
  2.  In which thread library cleanup routine called. In the case of 
       a) return from main thread  
 	  b) exit call in the mid of execution  
@@ -51,15 +51,24 @@ Commands above will generate 2 files: dynamic library and executable to test thi
  1. If process exit triggered by not library loader thread, then initialization routine and cleanup routines will be called from different conexes  
     This is not taken into account always!!!  
  2. Initializing routines calling sequence will be listed below  
-     [1]  pragma_initializers # for windows some hack is needed to make this first  
-	 [2]  global/static constructors  
-	 [3]  only windows - DllMain  
+     a) For Windows  
+         [1]  pragma_initializers # some hack is needed to make this first  
+	     [2]  global/static constructors  
+	     [3]  DllMain  
+	 b) For linux inside one file if there are several '__attribute__((__constructor__))'s and several global/static constructors,   
+	    then for that file first will be called '__attribute__((__constructor__))'s then constructors.  
+		But !!!!!!!!!!!!!!!!  
+		In the case if there are 2 files each with '__attribute__((__constructor__))'s and constrctors, then constructors in first  
+		file will be called before '__attribute__((__constructor__))'s in second file.  
+		So for GCC (I guess clang also, should be tested) no guaranty that '__attribute__((__constructor__))'s will be called  
+		before constructors if they are all not in one source file . see [this]() !!!!!!!!!!!!!!!!!!!!!!!!!!  
 
 
 ![Init deinit sequence](https://github.com/davitkalantaryan/library_init_deinit_test/blob/master/docs/images/windows_output_sceenshot.png)  
 ![sequence with 2 library source files](https://github.com/davitkalantaryan/library_init_deinit_test/blob/master/docs/images/windows_output_with_2_source_files_sceenshot.png)  
 
-## code example to insert code in the crt initialization section (look here microsoft [docu](https://docs.microsoft.com/en-us/cpp/c-runtime-library/crt-initialization?view=vs-2019))  
+## code example to insert code in the crt initialization section 
+look here microsoft [documentation](https://docs.microsoft.com/en-us/cpp/c-runtime-library/crt-initialization?view=vs-2019)  
 ```cpp  
 #pragma section(".CRT$XCB",read)  
 #define INITIALIZER_RAW_(f,p)										\  
@@ -84,3 +93,6 @@ PRAGMA_INITIALIZER(pragma_initializaer))
 	atexit(AtExitCleanupFunction);
 }
 ```  
+
+## linxu screenshot on problem  
+![gcc unknown sequence](https://github.com/davitkalantaryan/library_init_deinit_test/blob/master/docs/images/problematic_initialization_sequence_on_linux.png)
